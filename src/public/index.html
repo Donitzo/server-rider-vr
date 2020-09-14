@@ -33,6 +33,10 @@ button {
     right:0;
     width:600px;
 }
+        
+button:nth-child(2) {
+    bottom:7.5em;
+}
 
 small {
     color:red;
@@ -41,5 +45,6 @@ small {
 </head>
 <body>
     <button>VR NOT AVAILABLE</button>
+    <button onclick="location.href=/\?swap/.test(location.search)?'/':'?swap'">SWAP LEFT AND RIGHT HAND</button>
 </body>
 </html>
