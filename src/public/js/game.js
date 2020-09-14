@@ -584,7 +584,7 @@ const sockets = map(2, side => map(2, sphere => {
 // Create hands
 
 const hands = map(2, side => {
-    const grip = renderer['xr']['getControllerGrip'](side);
+    const grip = renderer['xr']['getControllerGrip'](/[?]swap/.test(location.search) ? side : 1 - side);
     cameraOffset.add(grip);
 
     const sphere = new THREE['Group']();
