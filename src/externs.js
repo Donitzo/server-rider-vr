@@ -1,4 +1,5 @@
 var THREE = {};
+var mergeGeometries = {};
 var copy;
 var clone;
 var length;
