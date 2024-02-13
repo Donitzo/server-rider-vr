@@ -3,7 +3,8 @@
 <head>
 <title>Server rider VR</title>
 <meta charset="utf-8" />
-<script src="https://js13kgames.com/webxr-src/2020/three.js" defer></script>
+<script src="three.js" defer></script>
+<script src="BufferGeometryUtils.js" defer></script>
 <script src="resources.js" defer></script>
 <script src="bundle.js" defer></script>
 <style>
@@ -35,6 +36,6 @@ color:red;
 </head>
 <body>
 <button>VR NOT AVAILABLE</button>
-<button onclick="location.href=/\?swap/.test(location.search)?'/':'?swap'">SWAP LEFT AND RIGHT HAND</button>
+<button onclick="location.href=/\?swap/.test(location.search)?'/':'?swap'" style="visibility:hidden;">SWAP LEFT AND RIGHT HAND</button>
 </body>
 </html>
