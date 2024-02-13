@@ -18,12 +18,14 @@ __version__ = '1.1.4'
 
 NON_JS_PATHS = [
     './src/index.html',
-    './src/public/js/resources.js'
+    './src/public/js/resources.js',
+    './src/public/js/three.js',
+    './src/public/js/BufferGeometryUtils.js',
 ]
 
 JS_PATHS = [
     './src/public/tinysequencer/tinysequencer.js',
-    './src/public/js/game.js'
+    './src/public/js/game.js',
 ]
 
 JS_EXTERNS_PATH = './src/externs.js'
