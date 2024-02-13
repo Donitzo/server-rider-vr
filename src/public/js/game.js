@@ -92,6 +92,7 @@ const scene = new THREE['Scene']();
 // Setup VR button
 
 const button = document.querySelector('button');
+document.querySelectorAll('button')[1].style.visibility = 'visible';
 let session = null;
 
 const xr = navigator['xr'];
@@ -235,14 +236,15 @@ const createTextObject = function(width, foreground) {
 ////////////////////////////////////////////////////////////////////////
 // Create background
 
-const geometryBackground = new THREE['Geometry']();
+let geometryBackground = null;
 
 const servers = [];
+
 map(1000, i => {
     v0.set(rand(-0.5, 0.5), rand(-0.5, 0.5), rand(-0.5, 0.5))['setLength'](rand(1000, 4000));
 
-    geometryBackground['merge'](new THREE['OctahedronGeometry'](rand(20, 40)),
-        m0['identity']()['makeTranslation'](v0.x, v0.y, v0.z));
+    const geometry = new THREE['OctahedronGeometry'](rand(20, 40))['applyMatrix4'](m0['identity']()['makeTranslation'](v0.x, v0.y, v0.z));
+    geometryBackground = geometryBackground ? mergeGeometries([geometryBackground, geometry]) : geometry;
 
     if (i < 30) {
         const text = createTextObject(700, false);
@@ -259,8 +261,8 @@ map(1000, i => {
         m0['identity']()['makeTranslation']((v0.x + p.x) / 2, (v0.y + p.y) / 2, (v0.z + p.z) / 2)['multiply'](
             m1['identity']()['lookAt'](v0, p, v1.set(0, 1, 0)));
 
-        const geometry = new THREE['CylinderGeometry'](2, 2, v0['distanceTo'](p), 3)['rotateX'](PI / 2);
-        geometryBackground['merge'](geometry, m0);
+        const geometry = new THREE['CylinderGeometry'](2, 2, v0['distanceTo'](p), 3)['rotateX'](PI / 2)['applyMatrix4'](m0);
+        geometryBackground = mergeGeometries([geometryBackground, geometry['toNonIndexed']()]);
     });
 
     servers.push(v0.clone());
@@ -432,13 +434,13 @@ const createTunnel = curve => {
         },
     };
 
-    const geometryTunnel = new THREE['TubeBufferGeometry'](curve, segments, 2, radialSegments, false);
+    const geometryTunnel = new THREE['TubeGeometry'](curve, segments, 2, radialSegments, false);
 
     tunnel.object = new THREE['Mesh'](geometryTunnel, materialTunnel);
     tunnel.object.renderOrder = 1;
     scene.add(tunnel.object);
 
-    const geometryCables = new THREE['Geometry']();
+    let geometryCables = null;
 
     map(50, i => {
         const cableAngle = rand(0, PI * 2);
@@ -447,9 +449,12 @@ const createTunnel = curve => {
         const cableWaypoints = map(segments, i => tunnel.pointAt(
             lengths[i], cableRadius, cableAngle + cableRotation * lengths[i], new THREE['Vector3']()));
 
-        geometryCables['merge'](new THREE['TubeGeometry'](
+        console.log();
+
+        const geometry = new THREE['TubeGeometry'](
             new THREE['CatmullRomCurve3'](cableWaypoints),
-            cableWaypoints.length, 0.05, 3, false));
+            cableWaypoints.length, 0.05, 3, false)['toNonIndexed']();
+        geometryCables = geometryCables ? mergeGeometries([geometryCables, geometry]) : geometry;
     });
 
     tunnel.object.add(new THREE['Mesh'](
@@ -498,16 +503,15 @@ scene.add(hub);
 const hubWalls = [];
 
 map(2, upper => {
-    const geometry = new THREE['ConeGeometry'](4, 5, 4, 1, true);
+    let geometry = new THREE['ConeGeometry'](4, 5, 4, 1, true);
     geometry.translate(0, 2.495, 0);
 
     map(32, () => {
         const y = rand(0, 3);
         const radius = 2.6 - abs(y) + rand(0.1, 0.3);
         const angle = rand(0, PI * 2);
-        geometry['merge'](
-            new THREE['CylinderGeometry'](radius, radius, rand(0.02, 0.1), 20, 1, true, angle, 1),
-            m0['makeTranslation'](0, y, 0));
+        geometry = mergeGeometries([geometry,
+            new THREE['CylinderGeometry'](radius, radius, rand(0.02, 0.1), 20, 1, true, angle, 1)['applyMatrix4'](m0['makeTranslation'](0, y, 0))]);
     });
 
     geometry.rotateX(upper * PI);
